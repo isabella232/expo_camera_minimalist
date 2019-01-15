@@ -6,21 +6,17 @@ import {
   Icon,
   Dimensions,
   StyleSheet,
-  Button
+  Button,
+  Modal
 } from "react-native";
-import {
-  Permissions,
-  Camera,
-  BarCodeScanner
-} from "expo";
+import { Permissions, Camera, BarCodeScanner } from "expo";
 
 const OVERLAY_COLOR = "rgba(0,0,0,0.8)";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 class ScannerOverlay extends Component {
-
   static defaultProps = {
-    onClose: () => {},
+    onClose: () => {}
   };
   constructor(props) {
     super(props);
@@ -47,12 +43,9 @@ class ScannerOverlay extends Component {
             }}
           >
             balblablabla
-            
           </Text>
 
-          <TouchableOpacity
-            onPress={this.props.onClose}
-          >
+          <TouchableOpacity onPress={this.props.onClose}>
             <Text
               style={{
                 width: SCREEN_WIDTH - 80, // 250
@@ -61,7 +54,9 @@ class ScannerOverlay extends Component {
                 lineHeight: 30,
                 textAlign: "center"
               }}
-            >CLOSE</Text>
+            >
+              CLOSE
+            </Text>
           </TouchableOpacity>
         </View>
         <View style={{ flexDirection: "row" }}>
@@ -83,7 +78,6 @@ class ScannerOverlay extends Component {
 }
 
 export default class App extends React.Component {
-
   state = {
     hasCameraPermission: false,
     showCamera: false
@@ -111,7 +105,7 @@ export default class App extends React.Component {
     );
     // TODO: translate
     if (!hasCameraPermission) {
-      console.log('NO ALLOWED');
+      console.log("NO ALLOWED");
     }
 
     this.setState({ hasCameraPermission: true, showCamera: true });
@@ -121,10 +115,11 @@ export default class App extends React.Component {
     this.requestCameraPermission();
   };
   closeCodeScanner = () => {
-    console.log('Close scanner');
+    console.log("Close scanner");
     this.setState({ showCamera: false });
-  }
+  };
 
+  handleBarCodeRead = () => {};
 
   render() {
     return (
@@ -132,9 +127,15 @@ export default class App extends React.Component {
         <Text>Camera bug crash test</Text>
         <Button
           onPress={this.showCamera}
+          style={{ backgroundColor: "red", color: "white", padding: 20 }}
           title="Show camera view"
         />
-        {this.state.hasCameraPermission && this.state.showCamera ? (
+
+        <Modal
+          animationType="slide"
+          visible={this.state.hasCameraPermission && this.state.showCamera}
+          onRequestClose={() => {}}
+        >
           <Camera
             onMountError={err => console.error(err)}
             onBarCodeScanned={this.handleBarCodeRead}
@@ -146,22 +147,18 @@ export default class App extends React.Component {
             style={{ ...StyleSheet.absoluteFillObject }}
           >
             <ScannerOverlay onClose={this.closeCodeScanner} />
-
           </Camera>
-        ): null }
-
+        </Modal>
       </View>
     );
   }
-
-
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center"
+  }
 });
